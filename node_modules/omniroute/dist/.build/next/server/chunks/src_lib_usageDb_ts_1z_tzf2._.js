@@ -1,0 +1,3 @@
+module.exports=[36197,a=>a.a(async(t,e)=>{try{var i=a.i(312125),c=a.i(27663),s=t([i,c]);[i,c]=s.then?(await s)():s,a.s(["getModelLatencyStats",()=>c.getModelLatencyStats]),e()}catch(a){e(a)}},!1),312125,a=>a.a(async(t,e)=>{try{var i=a.i(461145),c=a.i(27663);a.i(15844);var s=a.i(897114),n=a.i(828688),r=t([i,c,s,n]);[i,c,s,n]=r.then?(await r)():r,a.s([]),e()}catch(a){e(a)}},!1)];
+
+//# sourceMappingURL=src_lib_usageDb_ts_1z_tzf2._.js.map

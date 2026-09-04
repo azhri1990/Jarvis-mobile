@@ -1,0 +1,40 @@
+module.exports=[439951,e=>{"use strict";var t=e.i(964718);e.s(["logAuditEvent",()=>t.logAuditEvent])},964718,e=>{"use strict";var t=e.i(899378),a=e.i(46690),r=e.i(979464),i=e.i(167213),s=e.i(577122);let o=["provider.credentials.created","provider.credentials.applied","provider.credentials.updated","provider.credentials.revoked","provider.credentials.batch_revoked","provider.credentials.batch_updated","provider.credentials.bulk_created","provider.credentials.bulk_imported","provider.credentials.imported","provider.validation.ssrf_blocked","auth.login.success","auth.login.error","auth.login.failed","auth.login.locked","auth.login.misconfigured","auth.login.setup_required","auth.logout.success","sync.token.created","sync.token.revoked","settings.update","settings.update_failed","service.reveal_api_key","quota.pool.created","quota.pool.updated","quota.pool.deleted","quota.plan.updated","quota.store.driver_changed"];function n(){try{return(0,t.getDbInstance)()}catch{return null}}e.i(217647);let u={resource_type:"TEXT",status:"TEXT",request_id:"TEXT",metadata:"TEXT"},l=new Set(["apikey","extraapikeys","accesstoken","refreshtoken","idtoken","authtoken","jwttoken","token","secret","password","authorization","cookie","setcookie","consoleapikey","clientsecret"]);function d(e){if(null==e||""===e)return null;let t=function e(t){return Array.isArray(t)?t.map(t=>e(t)):t&&"object"==typeof t?Object.fromEntries(Object.entries(t).map(([t,a])=>{let r;return[t,(r=t.replace(/[^a-z0-9]/gi,"").toLowerCase())&&(l.has(r)||r.endsWith("apikey")||r.endsWith("token")||r.endsWith("secret")||r.endsWith("password"))?"[redacted]":e(a)]})):t}(e);if("string"==typeof t)return t;try{return JSON.stringify(t)}catch{return String(t)}}function c(e){if(null==e||""===e)return null;if("string"!=typeof e)return e;try{return JSON.parse(e)}catch{return e}}function p(e){e.exec(`
+    CREATE TABLE IF NOT EXISTS audit_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      timestamp TEXT NOT NULL DEFAULT (datetime('now')),
+      action TEXT NOT NULL,
+      actor TEXT NOT NULL DEFAULT 'system',
+      target TEXT,
+      details TEXT,
+      ip_address TEXT,
+      resource_type TEXT,
+      status TEXT,
+      request_id TEXT,
+      metadata TEXT
+    );
+  `);let t=[];try{t=e.prepare("PRAGMA table_info(audit_log)").all()}catch{t=[]}let a=new Set(t.map(e=>e.name));for(let[t,r]of Object.entries(u))if(!a.has(t))try{e.exec(`ALTER TABLE audit_log ADD COLUMN ${t} ${r}`)}catch{}e.exec(`
+    CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_log(timestamp);
+    CREATE INDEX IF NOT EXISTS idx_audit_action ON audit_log(action);
+    CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_log(actor);
+    CREATE INDEX IF NOT EXISTS idx_audit_resource_type ON audit_log(resource_type);
+    CREATE INDEX IF NOT EXISTS idx_audit_status ON audit_log(status);
+    CREATE INDEX IF NOT EXISTS idx_audit_request_id ON audit_log(request_id);
+  `)}function g(e={}){let t=[],a=[],r=(e,r)=>{r&&(t.push(`${e} LIKE ?`),a.push(`%${r}%`))};if(r("action",e.action),r("actor",e.actor),r("target",e.target),r("resource_type",e.resourceType),r("status",e.status),r("request_id",e.requestId),e.from&&(t.push("datetime(timestamp) >= datetime(?)"),a.push(e.from)),e.to&&(t.push("datetime(timestamp) <= datetime(?)"),a.push(e.to)),"high"===e.levelFilter&&o.length>0){let e=o.map(()=>"?").join(", ");t.push(`action IN (${e})`),a.push(...Array.from(o))}return{where:t.length>0?`WHERE ${t.join(" AND ")}`:"",params:a}}function E(e){let t=n();if(t)try{p(t);let a=e.createdAt||new Date().toISOString(),r=d(e.details??e.metadata),i=void 0!==e.metadata?e.metadata:e.details&&"object"==typeof e.details?e.details:null;t.prepare(`
+      INSERT INTO audit_log (
+        timestamp,
+        action,
+        actor,
+        target,
+        details,
+        ip_address,
+        resource_type,
+        status,
+        request_id,
+        metadata
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(a,e.action,e.actor||"system",e.target||null,r,e.ipAddress||null,e.resourceType||null,e.status||null,e.requestId||null,d(i))}catch{}}async function T(){let t=n(),a=(0,r.getAppLogRetentionDays)(),s=(0,r.getCallLogRetentionDays)(),o=(0,r.getCallLogsTableMaxRows)(),u=(0,r.getProxyLogsTableMaxRows)();if(!t)return{deletedUsage:0,deletedCallLogs:0,deletedProxyLogs:0,deletedRequestDetailLogs:0,deletedAuditLogs:0,deletedMcpAuditLogs:0,trimmedCallLogs:0,trimmedProxyLogs:0,appRetentionDays:a,callRetentionDays:s,callLogsMaxRows:o,proxyLogsMaxRows:u};let l=(0,r.getCallLogRetentionDaysOverride)(),d=(0,r.getAppLogRetentionDaysOverride)(),c=null;try{let e=(0,i.getUserDatabaseSettings)().retention;c={usageHistory:e.usageHistory,callLogs:e.callLogs,mcpAudit:e.mcpAudit}}catch{}let p=l??c?.usageHistory??s,g=l??c?.callLogs??s,T=d??c?.mcpAudit??a,m=new Date(Date.now()-864e5*p).toISOString(),_=new Date(Date.now()-864e5*g).toISOString(),y=new Date(Date.now()-864e5*a).toISOString(),h=new Date(Date.now()-864e5*T).toISOString(),f=0,R=0,L=0,O=0,I=0,A=0,S=0,D=0;try{f=t.prepare("DELETE FROM usage_history WHERE timestamp < ?").run(m).changes}catch{}try{let{deleteCallLogsBefore:t}=await e.A(547938);R=t(_).deletedRows}catch{}try{L=t.prepare("DELETE FROM proxy_logs WHERE timestamp < ?").run(_).changes}catch{}try{O=t.prepare("DELETE FROM request_detail_logs WHERE timestamp < ?").run(_).changes}catch{}try{I=t.prepare("DELETE FROM audit_log WHERE timestamp < ?").run(y).changes}catch{}try{A=t.prepare("DELETE FROM mcp_tool_audit WHERE created_at < ?").run(h).changes}catch{}if(o>0)try{let{trimCallLogsToMaxRows:t}=await e.A(547938);S=t(o).deletedRows}catch{}if(u>0)try{let e=t.prepare("SELECT COUNT(*) as cnt FROM proxy_logs").get();for(;e.cnt>u;){let a=Math.min(e.cnt-u,5e3),r=t.prepare(`DELETE FROM proxy_logs WHERE id IN (
+              SELECT id FROM proxy_logs ORDER BY timestamp ASC LIMIT ?
+            )`).run(a);if(D+=r.changes,e.cnt-=r.changes,0===r.changes)break}}catch{}return E({action:"compliance.cleanup",actor:"system",target:"log-retention",resourceType:"maintenance",status:"success",details:{deletedUsage:f,deletedCallLogs:R,deletedProxyLogs:L,deletedRequestDetailLogs:O,deletedAuditLogs:I,deletedMcpAuditLogs:A,trimmedCallLogs:S,trimmedProxyLogs:D,appRetentionDays:a,callRetentionDays:s,callLogsMaxRows:o,proxyLogsMaxRows:u}}),{deletedUsage:f,deletedCallLogs:R,deletedProxyLogs:L,deletedRequestDetailLogs:O,deletedAuditLogs:I,deletedMcpAuditLogs:A,trimmedCallLogs:S,trimmedProxyLogs:D,appRetentionDays:a,callRetentionDays:s,callLogsMaxRows:o,proxyLogsMaxRows:u}}e.s(["cleanupExpiredLogs",0,T,"countAuditLog",0,function(e={}){let t=n();if(!t)return 0;p(t);let{where:a,params:r}=g(e),i=t.prepare(`SELECT COUNT(*) as count FROM audit_log ${a}`).get(...r);return Number(i?.count||0)},"getAuditLog",0,function(e={}){let t=n();if(!t)return[];p(t);let{where:a,params:r}=g(e),i=Number.isFinite(e.limit)?Math.max(1,Math.min(500,e.limit||100)):100,s=Number.isFinite(e.offset)?Math.max(0,e.offset||0):0;return t.prepare(`SELECT * FROM audit_log ${a} ORDER BY timestamp DESC, id DESC LIMIT ? OFFSET ?`).all(...r,i,s).map(e=>{let t,a,r,i,s,o;return t=c(e.details),a=c(e.metadata),r="string"==typeof e.resource_type?e.resource_type:null,i="string"==typeof e.request_id?e.request_id:null,s="string"==typeof e.ip_address?e.ip_address:null,o="string"==typeof e.timestamp?e.timestamp:new Date().toISOString(),{...e,timestamp:o,createdAt:o,details:t,metadata:a??(t&&"object"==typeof t?t:null),ip_address:s,ip:s,resource_type:r,resourceType:r,request_id:i,requestId:i,status:"string"==typeof e.status?e.status:null}})},"getAuditRequestContext",0,function(e){return{ipAddress:e?(0,a.getClientIpFromRequest)(e):null,requestId:(0,s.getRequestId)()||e?.headers?.get?.("x-request-id")||(0,s.generateRequestId)()}},"getRetentionDays",0,function(){return{app:(0,r.getAppLogRetentionDays)(),call:(0,r.getCallLogRetentionDays)()}},"initAuditLog",0,function(){let e=n();e&&p(e)},"logAuditEvent",0,E],964718)},547938,e=>{e.v(t=>Promise.all(["server/chunks/src_lib_usage_callLogs_ts_05u90b8._.js"].map(t=>e.l(t))).then(()=>t(397506)))}];
+
+//# sourceMappingURL=src_lib_141z3m-._.js.map

@@ -1,0 +1,3 @@
+module.exports=[692785,e=>{"use strict";var t=e.i(848270);let o={"request.completed":2278750,"request.failed":0xef4444,"quota.exceeded":0xeab308,"test.ping":9133302};e.s(["buildDiscordPayload",0,function(e,r){let l=t.EVENT_DESCRIPTIONS[e],i="string"==typeof r.model?r.model:null,n="string"==typeof r.error?r.error:null,s=[];return i&&s.push(`**Model:** \`${i}\``),n&&s.push(`**Error:** \`${n}\``),0===s.length&&s.push(l.description),{embeds:[{title:`${l.emoji} ${l.label}`,description:s.join("\n"),color:o[e]??6514417,footer:{text:`OmniRoute \xb7 ${new Date().toISOString()}`}}]}}])}];
+
+//# sourceMappingURL=src_lib_webhooks_integrations_discord_ts_1cnfzm4._.js.map

@@ -1,0 +1,3 @@
+{
+  "/api/providers/[id]/chatgpt-web-codex-doctor/route": "app/api/providers/[id]/chatgpt-web-codex-doctor/route.js"
+}

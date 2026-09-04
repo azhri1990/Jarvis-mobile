@@ -1,0 +1,3 @@
+module.exports=[323617,a=>{"use strict";var b=a.i(187924),c=a.i(572131),d=a.i(50944),e=a.i(725469);function f(){let a=(0,d.useSearchParams)().get("id");return(0,b.jsx)("div",{className:"h-full min-h-0",children:(0,b.jsx)(e.default,{initialSelectedId:a})})}a.s(["default",0,function(){return(0,b.jsx)(c.Suspense,{fallback:(0,b.jsx)("div",{className:"flex items-center justify-center py-12 text-text-muted text-sm",children:"Loading timeline..."}),children:(0,b.jsx)(f,{})})}])}];
+
+//# sourceMappingURL=src_app_%28dashboard%29_dashboard_logs_timeline_page_tsx_05t50gr._.js.map

@@ -1,0 +1,3 @@
+{
+  "/api/oauth/cursor/login/start/route": "app/api/oauth/cursor/login/start/route.js"
+}

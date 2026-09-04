@@ -1,0 +1,3 @@
+{
+  "/api/providers/[id]/refresh-cursor/route": "app/api/providers/[id]/refresh-cursor/route.js"
+}

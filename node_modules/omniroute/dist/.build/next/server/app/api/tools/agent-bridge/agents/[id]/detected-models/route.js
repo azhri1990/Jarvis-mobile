@@ -1,0 +1,10 @@
+var R=require("../../../../../../../chunks/[turbopack]_runtime.js")("server/app/api/tools/agent-bridge/agents/[id]/detected-models/route.js")
+R.c("server/chunks/src_lib_db_1hww2jo._.js")
+R.c("server/chunks/[root-of-the-server]__0q9gd9m._.js")
+R.c("server/chunks/open-sse_1k8ubco._.js")
+R.c("server/chunks/[root-of-the-server]__0g06wx7._.js")
+R.c("server/chunks/src_lib_1icoj61._.js")
+R.c("server/chunks/src_0h2lvww._.js")
+R.c("server/chunks/1jng_app_api_tools_agent-bridge_agents_[id]_detected-models_route_actions_1h0wbor.js")
+R.m(395925)
+module.exports=R.m(395925).exports

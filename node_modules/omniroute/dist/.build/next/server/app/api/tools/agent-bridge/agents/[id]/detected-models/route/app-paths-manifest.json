@@ -1,0 +1,3 @@
+{
+  "/api/tools/agent-bridge/agents/[id]/detected-models/route": "app/api/tools/agent-bridge/agents/[id]/detected-models/route.js"
+}

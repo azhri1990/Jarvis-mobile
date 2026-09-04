@@ -1,0 +1,3 @@
+module.exports=[152983,a=>{"use strict";a.s(["default",()=>b]);let b=(0,a.i(211857).registerClientReference)(function(){throw Error("Attempted to call the default export of [project]/src/app/(dashboard)/dashboard/providers/error.tsx from the server, but it's on the client. It's not possible to invoke a client function from the server, it can only be rendered as a Component or passed to props of a Client Component.")},"[project]/src/app/(dashboard)/dashboard/providers/error.tsx","default")},776936,a=>{"use strict";var b=a.i(152983);a.n(b)},236961,function(a){a.n(a.i(776936))}];
+
+//# sourceMappingURL=src_app_%28dashboard%29_dashboard_providers_error_tsx_1n7upom._.js.map

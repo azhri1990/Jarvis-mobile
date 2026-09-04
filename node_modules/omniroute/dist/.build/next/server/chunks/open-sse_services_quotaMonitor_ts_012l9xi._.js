@@ -1,0 +1,3 @@
+module.exports=[203198,t=>t.a(async(o,r)=>{try{var a=t.i(95360),e=t.i(190134),i=o([a,e]);[a,e]=i.then?(await i)():i,t.s(["clearQuotaMonitors",()=>a.clearQuotaMonitors,"getActiveMonitorCount",()=>a.getActiveMonitorCount,"getQuotaMonitorSnapshot",()=>a.getQuotaMonitorSnapshot,"getQuotaMonitorSnapshots",()=>a.getQuotaMonitorSnapshots,"getQuotaMonitorSummary",()=>a.getQuotaMonitorSummary,"isQuotaMonitorEnabled",()=>a.isQuotaMonitorEnabled,"registerMonitorFetcher",()=>a.registerMonitorFetcher,"registerQuotaFetcher",()=>e.registerQuotaFetcher,"startQuotaMonitor",()=>a.startQuotaMonitor,"stopQuotaMonitor",()=>a.stopQuotaMonitor]),r()}catch(t){r(t)}},!1)];
+
+//# sourceMappingURL=open-sse_services_quotaMonitor_ts_012l9xi._.js.map

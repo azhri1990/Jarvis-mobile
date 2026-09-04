@@ -1,0 +1,78 @@
+module.exports=[949564,e=>{"use strict";let t=["read","write","admin"],r={read:1,write:2,admin:3};function n(e){return"string"==typeof e&&t.includes(e)}e.s(["ACCESS_SCOPES",0,t,"normalizeScope",0,function(e,t="read"){return n(e)?e:t},"scopeSatisfies",0,function(e,t){return!!n(e)&&r[e]>=r[t]}])},858235,e=>{"use strict";var t=e.i(254799);function r(e){let r=(0,t.randomUUID)(),n=e.type||(e.status>=500?"server_error":404===e.status?"not_found":409===e.status?"conflict":"invalid_request");return Response.json({error:{message:e.message,type:n,details:e.details},requestId:r},{status:e.status})}e.s(["createErrorResponse",0,r,"createErrorResponseFromUnknown",0,function(e,t="Unexpected server error"){return r({status:Number(e?.status)||500,message:"string"==typeof e?.message?e.message:t,type:e?.type,details:e?.details})}])},750461,e=>{"use strict";var t=e.i(902157),r=e.i(666680),n=e.i(27030);let a="x-omniroute-internal-service-token";function s(){let e=process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN?.trim();if(e)return e;let r=process.env.OMNIROUTE_INTERNAL_SERVICE_TOKEN_FILE?.trim();if(!r)return"";try{return(0,t.readFileSync)(r,"utf8").trim()}catch{return""}}e.s(["getInternalServiceAuthHeaders",0,function(){let e=s();return e?{[a]:e}:{}},"isTrustedLoopbackInternalServiceRequest",0,function(e){let t,i;return"loopback"===e.headers.get(n.AUTHZ_HEADER_PEER_LOCALITY)&&(t=s(),i=e.headers.get(a)?.trim()||"",!!t&&!!i&&t.length===i.length&&(0,r.timingSafeEqual)(Buffer.from(i,"utf8"),Buffer.from(t,"utf8")))}])},15658,e=>e.a(async(t,r)=>{try{var n=e.i(235328),a=e.i(858235),s=e.i(287726),i=e.i(125852),o=e.i(742769),c=e.i(509828),u=e.i(750461),l=e.i(27030),p=e.i(514138),_=t([n,s,i]);async function d(e,t={}){if(!t.alwaysRequireAuth&&!await (0,n.isAuthRequired)(e)||await (0,n.isDashboardSessionAuthenticated)(e)||(0,u.isTrustedLoopbackInternalServiceRequest)(e)||"management_key"===e.headers.get(l.AUTHZ_HEADER_AUTH_KIND)&&"local-cli-token"===e.headers.get(l.AUTHZ_HEADER_AUTH_LABEL)||await (0,o.isCliTokenAuthValid)(e))return null;let r=(0,c.evaluateAccessTokenAuth)(e);switch(r.kind){case"ok":return null;case"error":return(0,a.createErrorResponse)({status:503,message:"Service temporarily unavailable",type:"server_error"});case"invalid":return(0,a.createErrorResponse)({status:401,message:"Invalid or expired access token",type:"invalid_request"});case"insufficient":return(0,a.createErrorResponse)({status:403,message:`Access token scope '${r.have}' is insufficient; '${r.need}' required.`,type:"invalid_request"})}let _=(0,s.extractApiKey)(e,{allowUrl:!1});if(_){let e;try{if(!await (0,s.isValidApiKey)(_)){let e;return e=t.invalidApiKeyStatus??403,(0,a.createErrorResponse)({status:e,message:401===e?"Invalid API key":"Invalid management token",type:"invalid_request"})}e=await (0,i.getApiKeyMetadata)(_)}catch{return(0,a.createErrorResponse)({status:503,message:"Service temporarily unavailable",type:"server_error"})}return e&&(t.acceptMcpConnectScope?(0,p.hasMcpConnectOrManageScope)(e.scopes):function(e=[]){return(0,p.hasManageScope)(e)}(e.scopes))?null:(0,a.createErrorResponse)({status:403,message:t.acceptMcpConnectScope?`API key lacks '${p.MCP_CONNECT_SCOPE}' (or 'manage') scope. Enable it in the API Keys dashboard.`:"API key lacks 'manage' scope. Enable it in the API Keys dashboard.",type:"invalid_request"})}return(0,a.createErrorResponse)({status:401,message:"Authentication required",type:"invalid_request"})}[n,s,i]=_.then?(await _)():_,e.s(["requireManagementAuth",0,d]),r()}catch(e){r(e)}},!1),516165,e=>{"use strict";var t=e.i(254799),r=e.i(899378),n=e.i(949564);let a="oma_live_",s=a.length+6;function i(e){return{id:e.id,name:e.name,scope:(0,n.normalizeScope)(e.scope),tokenPrefix:e.token_prefix,createdAt:e.created_at,lastUsedAt:e.last_used_at,expiresAt:e.expires_at,revokedAt:e.revoked_at}}function o(e){return(0,t.createHash)("sha256").update(e).digest("hex")}e.s(["createAccessToken",0,function(e){let i=(e.name??"").trim();if(!i)throw Error("Access token name is required");let c=(0,r.getDbInstance)(),u=(0,n.normalizeScope)(e.scope,"read"),l=`${a}${(0,t.randomBytes)(32).toString("base64url")}`,p=`tok_${(0,t.randomUUID)()}`,_=o(l),d=l.slice(0,s),f=new Date().toISOString(),m=e.expiresAt??null;return c.prepare(`INSERT INTO cli_access_tokens
+       (id, token_hash, token_prefix, name, scope, created_at, expires_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`).run(p,_,d,i,u,f,m),{secret:l,record:{id:p,name:i,scope:u,tokenPrefix:d,createdAt:f,lastUsedAt:null,expiresAt:m,revokedAt:null}}},"getAccessToken",0,function(e){let t=(0,r.getDbInstance)().prepare("SELECT * FROM cli_access_tokens WHERE id = ?").get(e);return t?i(t):null},"listAccessTokens",0,function(){return(0,r.getDbInstance)().prepare("SELECT * FROM cli_access_tokens ORDER BY created_at DESC").all().map(i)},"revokeAccessToken",0,function(e){return!!e&&(0,r.getDbInstance)().prepare(`UPDATE cli_access_tokens SET revoked_at = ?
+         WHERE (id = ? OR token_prefix = ?) AND revoked_at IS NULL`).run(new Date().toISOString(),e,e).changes>0},"verifyAccessToken",0,function(e){if(!e||"string"!=typeof e)return null;let t=(0,r.getDbInstance)(),a=t.prepare("SELECT * FROM cli_access_tokens WHERE token_hash = ?").get(o(e));if(!a||a.revoked_at||function(e){if(!e)return!1;let t=new Date(e).getTime();return Number.isFinite(t)&&t<=Date.now()}(a.expires_at))return null;try{t.prepare("UPDATE cli_access_tokens SET last_used_at = ? WHERE id = ?").run(new Date().toISOString(),a.id)}catch{}return{id:a.id,name:a.name,scope:(0,n.normalizeScope)(a.scope)}}])},154945,e=>{"use strict";e.s(["buildPresetUnifiedSource",0,function(e){let{sinceIso:t,untilIso:r,rawCutoffDate:n,apiKeyWhere:a,apiKeyParams:s}=e,i=t?.split("T")[0]??null,o=(!i||i<n)&&!a,c={},u=[];o?(u.push("timestamp >= @presetRawCutoff"),c.presetRawCutoff=n):t&&(u.push("timestamp >= @presetSince"),c.presetSince=t),a&&(u.push(a),Object.assign(c,s));let l=u.length>0?`WHERE ${u.join(" AND ")}`:"",p=[];o&&(t&&(p.push("date >= @presetSinceDate"),c.presetSinceDate=i),p.push("date < @presetRawCutoffDate"),c.presetRawCutoffDate=n);let _=p.length>0?`WHERE ${p.join(" AND ")}`:"";return{unifiedSource:o?`(
+        SELECT timestamp, provider, model, service_tier,
+          tokens_input, tokens_output,
+          tokens_cache_read, tokens_cache_creation, tokens_reasoning
+        FROM usage_history
+        ${l}
+        UNION ALL
+        SELECT
+          date || 'T12:00:00.000Z' as timestamp,
+          provider, model,
+          'standard' as service_tier,
+          total_input_tokens as tokens_input,
+          total_output_tokens as tokens_output,
+          0 as tokens_cache_read,
+          0 as tokens_cache_creation,
+          0 as tokens_reasoning
+        FROM daily_usage_summary
+        ${_}
+      )`:`(SELECT timestamp, provider, model, service_tier,
+          tokens_input, tokens_output,
+          tokens_cache_read, tokens_cache_creation, tokens_reasoning
+        FROM usage_history
+        ${l}
+      )`,unifiedParams:c}},"buildUnifiedSource",0,function(e){let{sinceIso:t,untilIso:r,rawCutoffDate:n,apiKeyWhere:a,apiKeyParams:s}=e,i=t?.split("T")[0]??null,o=(!i||i<n)&&!a,c={},u=[];o?(u.push("timestamp >= @rawCutoff"),c.rawCutoff=n):t&&(u.push("timestamp >= @since"),c.since=t),r&&(u.push("timestamp <= @until"),c.until=r),a&&(u.push(a),Object.assign(c,s));let l=u.length>0?`WHERE ${u.join(" AND ")}`:"",p=[];o&&(t&&(p.push("date >= @sinceDate"),c.sinceDate=i),r&&(p.push("date <= @untilDate"),c.untilDate=r.split("T")[0]),p.push("date < @rawCutoffDate"),c.rawCutoffDate=n);let _=p.length>0?`WHERE ${p.join(" AND ")}`:"";return{unifiedSource:o?`(
+        SELECT
+          timestamp,
+          provider,
+          model,
+          tokens_input,
+          tokens_output,
+          tokens_cache_read,
+          tokens_cache_creation,
+          tokens_reasoning,
+          service_tier,
+          success,
+          latency_ms,
+          connection_id,
+          account_key,
+          api_key_id,
+          api_key_name,
+          1 as requests
+        FROM usage_history
+        ${l}
+        UNION ALL
+        SELECT
+          date || 'T12:00:00.000Z' as timestamp,
+          provider,
+          model,
+          total_input_tokens as tokens_input,
+          total_output_tokens as tokens_output,
+          0 as tokens_cache_read,
+          0 as tokens_cache_creation,
+          0 as tokens_reasoning,
+          'standard' as service_tier,
+          1 as success,
+          NULL as latency_ms,
+          NULL as connection_id,
+          NULL as account_key,
+          NULL as api_key_id,
+          NULL as api_key_name,
+          total_requests as requests
+        FROM daily_usage_summary
+        ${_}
+       )`:`(SELECT
+          timestamp, provider, model,
+          tokens_input, tokens_output,
+          tokens_cache_read, tokens_cache_creation, tokens_reasoning,
+          service_tier, success, latency_ms,
+          connection_id, account_key, api_key_id, api_key_name,
+          1 as requests
+        FROM usage_history
+        ${l}
+      )`,unifiedParams:c}}])},742769,e=>{"use strict";let t;var r=e.i(666680),n=e.i(493458),a=e.i(844376);try{let e=(0,a.createRequire)(process.argv[1]||process.cwd())("node-machine-id");t=e.machineIdSync||e.default?.machineIdSync}catch{t=()=>""}function s(){return process.env.OMNIROUTE_CLI_SALT||"omniroute-cli-auth-v1"}let i=null,o=null;var c=e.i(27030);async function u(e,t){let r=e.headers?.get(t);if(null!=r)return r;try{return(await (0,n.headers)()).get(t)}catch{return null}}function l(e){return e?.split(",")[0]?.trim()||null}async function p(e){let t=e.ip||e.socket?.remoteAddress||null;if(t){let e;return"127.0.0.1"===(e=t.replace(/^::ffff:/,""))||"::1"===e||"localhost"===e}if(l(await u(e,"cf-connecting-ip"))||l(await u(e,"x-forwarded-for"))||l(await u(e,"x-real-ip")))return!1;let r=await u(e,c.AUTHZ_HEADER_PEER_LOCALITY);return null!==r&&"loopback"===r}async function _(e){if("true"===process.env.OMNIROUTE_DISABLE_CLI_TOKEN)return!1;let n=await u(e,"x-omniroute-cli-token");return!!n&&!!await p(e)&&[function(){let e=(void 0)??s();try{let n=t(!0);if(!n)return"";if(e===o&&null!==i)return i;let a=n?(0,r.createHmac)("sha256",n).update(e).digest("hex"):"";return i=a,o=e,a}catch{return""}}(),function(){let e=(void 0)??s();try{var n;return n=t(),n?(0,r.createHash)("sha256").update(n+e).digest("hex").substring(0,32):""}catch{return""}}()].filter(Boolean).some(e=>{if(n.length!==e.length)return!1;try{return r.default.timingSafeEqual(Buffer.from(n,"utf8"),Buffer.from(e,"utf8"))}catch{return!1}})}e.s(["isCliTokenAuthValid",0,_],742769)},509828,e=>{"use strict";var t=e.i(516165),r=e.i(949564);let n=["/api/cli/tokens","/api/oauth","/api/auth","/api/policy","/api/services","/api/mcp"],a=["/api/providers","/api/cli-tools/apply"],s=new Set(["GET","HEAD","OPTIONS"]);function i(e,t){return t.some(t=>e===t||e.startsWith(t+"/"))}let o="oma_";function c(e){let t=e.headers.get("authorization")||"",r=/^Bearer\s+(.+)$/i.exec(t.trim());return r?r[1].trim():null}e.s(["ACCESS_TOKEN_PREFIX",0,o,"evaluateAccessTokenAuth",0,function(e){let u,l=c(e);if(!l||!l.startsWith(o))return{kind:"absent"};try{u=(0,t.verifyAccessToken)(l)}catch{return{kind:"error"}}if(!u)return{kind:"invalid"};let p=function(e,t){let r=(e||"GET").toUpperCase(),o=t||"/";if(i(o,n))return"admin";let c=!s.has(r);return c&&i(o,a)?"admin":c?"write":"read"}(e.method,function(e){try{return new URL(e).pathname}catch{return"/"}}(e.url));return(0,r.scopeSatisfies)(u.scope,p)?{kind:"ok",scope:u.scope,id:u.id,name:u.name}:{kind:"insufficient",have:u.scope,need:p}},"extractBearer",0,c],509828)},514138,e=>{"use strict";let t=new Set(["manage","admin"]),r="mcp:connect";function n(e=[]){for(let r of e)if(t.has(r))return!0;return!1}e.s(["MANAGEMENT_API_KEY_SCOPES",0,t,"MANAGE_SCOPE",0,"manage","MCP_CONNECT_SCOPE",0,r,"hasManageScope",0,n,"hasMcpConnectOrManageScope",0,function(e=[]){return!!n(e)||e.includes(r)}])}];
+
+//# sourceMappingURL=src_185hd4w._.js.map

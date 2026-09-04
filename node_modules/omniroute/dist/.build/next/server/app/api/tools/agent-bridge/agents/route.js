@@ -1,0 +1,10 @@
+var R=require("../../../../../chunks/[turbopack]_runtime.js")("server/app/api/tools/agent-bridge/agents/route.js")
+R.c("server/chunks/_1x2yz3y._.js")
+R.c("server/chunks/[root-of-the-server]__019b5xt._.js")
+R.c("server/chunks/open-sse_1k8ubco._.js")
+R.c("server/chunks/[root-of-the-server]__0g06wx7._.js")
+R.c("server/chunks/[root-of-the-server]__04fbmh-._.js")
+R.c("server/chunks/src_0h2lvww._.js")
+R.c("server/chunks/_next-internal_server_app_api_tools_agent-bridge_agents_route_actions_176-vrs.js")
+R.m(321518)
+module.exports=R.m(321518).exports

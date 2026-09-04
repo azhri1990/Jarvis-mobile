@@ -1,0 +1,10 @@
+var R=require("../../../../../chunks/[turbopack]_runtime.js")("server/app/api/services/mux/auto-start/route.js")
+R.c("server/chunks/src_lib_db_1kdz2j3._.js")
+R.c("server/chunks/[root-of-the-server]__17p8t_0._.js")
+R.c("server/chunks/open-sse_1k8ubco._.js")
+R.c("server/chunks/[root-of-the-server]__0g06wx7._.js")
+R.c("server/chunks/src_lib_1icoj61._.js")
+R.c("server/chunks/src_0uqt_iz._.js")
+R.c("server/chunks/_next-internal_server_app_api_services_mux_auto-start_route_actions_02e_ops.js")
+R.m(886033)
+module.exports=R.m(886033).exports

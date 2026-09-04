@@ -1,0 +1,3 @@
+module.exports=[887683,e=>{"use strict";e.s(["parseVertexAnthropicModels",0,function(e){return e&&"object"==typeof e?(Array.isArray(e.models)?e.models:[]).map(e=>{let t="string"==typeof e.name?e.name:"",r=t.replace(/^(?:projects\/[^/]+\/locations\/[^/]+\/)?publishers\/anthropic\/models\//,"")||t;return r?{id:r,name:"string"==typeof e.displayName&&e.displayName||r,supportedEndpoints:["chat"],targetFormat:"claude",..."string"==typeof e.description?{description:e.description}:{},owned_by:"anthropic"}:null}).filter(e=>null!==e):[]}])}];
+
+//# sourceMappingURL=src_lib_providerModels_vertexAnthropicModelsParser_ts_0zvxppi._.js.map

@@ -1,0 +1,3 @@
+module.exports=[514138,e=>{"use strict";let n=new Set(["manage","admin"]),t="mcp:connect";function a(e=[]){for(let t of e)if(n.has(t))return!0;return!1}e.s(["MANAGEMENT_API_KEY_SCOPES",0,n,"MANAGE_SCOPE",0,"manage","MCP_CONNECT_SCOPE",0,t,"hasManageScope",0,a,"hasMcpConnectOrManageScope",0,function(e=[]){return!!a(e)||e.includes(t)}])}];
+
+//# sourceMappingURL=src_shared_constants_managementScopes_ts_1n9k5r4._.js.map

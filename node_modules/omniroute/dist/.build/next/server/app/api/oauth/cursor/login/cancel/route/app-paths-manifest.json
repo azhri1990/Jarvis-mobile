@@ -1,0 +1,3 @@
+{
+  "/api/oauth/cursor/login/cancel/route": "app/api/oauth/cursor/login/cancel/route.js"
+}

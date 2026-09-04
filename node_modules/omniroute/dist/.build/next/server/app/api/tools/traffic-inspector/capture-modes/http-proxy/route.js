@@ -1,0 +1,11 @@
+var R=require("../../../../../../chunks/[turbopack]_runtime.js")("server/app/api/tools/traffic-inspector/capture-modes/http-proxy/route.js")
+R.c("server/chunks/src_0nw9ocx._.js")
+R.c("server/chunks/_159hegi._.js")
+R.c("server/chunks/open-sse_1k8ubco._.js")
+R.c("server/chunks/src_0h2lvww._.js")
+R.c("server/chunks/src_lib_1icoj61._.js")
+R.c("server/chunks/[root-of-the-server]__0g06wx7._.js")
+R.c("server/chunks/[root-of-the-server]__19icw0b._.js")
+R.c("server/chunks/1jng_app_api_tools_traffic-inspector_capture-modes_http-proxy_route_actions_0epzt-a.js")
+R.m(99743)
+module.exports=R.m(99743).exports

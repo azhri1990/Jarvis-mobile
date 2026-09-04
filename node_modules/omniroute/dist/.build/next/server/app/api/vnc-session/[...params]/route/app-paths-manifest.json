@@ -1,0 +1,3 @@
+{
+  "/api/vnc-session/[...params]/route": "app/api/vnc-session/[...params]/route.js"
+}

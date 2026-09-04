@@ -1,0 +1,12 @@
+var R=require("../../../../../chunks/[turbopack]_runtime.js")("server/app/api/gamification/federation/leaderboard/route.js")
+R.c("server/chunks/src_lib_db_13ma3i7._.js")
+R.c("server/chunks/[root-of-the-server]__1qhv87j._.js")
+R.c("server/chunks/_10_v7r9._.js")
+R.c("server/chunks/node_modules_next_1zdbrne._.js")
+R.c("server/chunks/src_0uqt_iz._.js")
+R.c("server/chunks/node_modules_next_dist_11w3z5e._.js")
+R.c("server/chunks/[root-of-the-server]__04fbmh-._.js")
+R.c("server/chunks/[root-of-the-server]__0g06wx7._.js")
+R.c("server/chunks/1oeh_server_app_api_gamification_federation_leaderboard_route_actions_1x7gwl8.js")
+R.m(403873)
+module.exports=R.m(403873).exports

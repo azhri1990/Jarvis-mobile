@@ -1,0 +1,3 @@
+{
+  "/api/providers/volcengine-plan/connect/[sessionId]/cancel/route": "app/api/providers/volcengine-plan/connect/[sessionId]/cancel/route.js"
+}

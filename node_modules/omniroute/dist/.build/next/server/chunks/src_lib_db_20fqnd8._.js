@@ -1,0 +1,42 @@
+module.exports=[853030,e=>{e.v(t=>Promise.all(["server/chunks/[root-of-the-server]__08aok8t._.js"].map(t=>e.l(t))).then(()=>t(260383)))},933762,e=>{e.v(t=>Promise.all(["server/chunks/[root-of-the-server]__0al_daj._.js"].map(t=>e.l(t))).then(()=>t(223764)))},833389,e=>{e.v(t=>Promise.all(["server/chunks/[root-of-the-server]__0_mbv8f._.js","server/chunks/_06kegw-._.js","server/chunks/_0u09ium._.js","server/chunks/src_0c7els9._.js","server/chunks/_0tsp696._.js","server/chunks/_00gbtxh._.js","server/chunks/open-sse_1en0bdk._.js","server/chunks/src_lib_db_0q-5o4j._.js","server/chunks/src_02l7t6d._.js","server/chunks/_1zujanj._.js","server/chunks/node_modules_bcryptjs_index_0qfrcpc.js","server/chunks/src_1lk5r5a._.js","server/chunks/src_shared_120yvyy._.js"].map(t=>e.l(t))).then(()=>t(543125)))},886515,e=>{"use strict";var t=e.i(830471),r=e.i(670226);let a=/^[a-z0-9][a-z0-9._-]{0,99}$/i,d=/[\u0000-\u001f\u007f]/;function n(e,t){let r="string"==typeof e?e.trim():"",n="string"==typeof t?t.trim():"";return!a.test(r)||n.length<1||n.length>200||d.test(n)?null:{provider:r,modelId:n}}function l(e){return{provider:e.provider,modelId:e.model_id,displayName:e.display_name,enabled:null===e.enabled?null:1===e.enabled,tombstoned:1===e.tombstoned,updatedAt:e.updated_at}}function s(e,r){return(0,t.getDbInstance)().prepare(`SELECT provider, model_id, display_name, enabled, tombstoned, updated_at
+         FROM radar_local_model_state WHERE provider = ? AND model_id = ?`).get(e,r)??null}function o(e){let r=(0,t.getDbInstance)();null!==e.displayName||null!==e.enabled||e.tombstoned?r.prepare(`INSERT INTO radar_local_model_state
+       (provider, model_id, display_name, enabled, tombstoned, updated_at)
+     VALUES (?, ?, ?, ?, ?, datetime('now'))
+     ON CONFLICT(provider, model_id) DO UPDATE SET
+       display_name = excluded.display_name,
+       enabled = excluded.enabled,
+       tombstoned = excluded.tombstoned,
+       updated_at = excluded.updated_at`).run(e.provider,e.modelId,e.displayName,null===e.enabled?null:+!!e.enabled,+!!e.tombstoned):r.prepare("DELETE FROM radar_local_model_state WHERE provider = ? AND model_id = ?").run(e.provider,e.modelId)}function i(){return(0,t.getDbInstance)().prepare(`SELECT provider, model_id, display_name, enabled, tombstoned, updated_at
+       FROM radar_local_model_state ORDER BY provider, model_id`).all().map(l)}e.s(["clearRadarLocalModelOverride",0,function(e,r){let a=n(e,r);return!!a&&((0,t.getDbInstance)().transaction(()=>{let e=s(a.provider,a.modelId);o({...a,displayName:null,enabled:null,tombstoned:e?.tombstoned===1})})(),!0)},"getRadarCache",0,function(){return(0,t.getDbInstance)().prepare("SELECT version, tier, payload, signature, fetched_at AS fetchedAt FROM radar_feed_cache WHERE id = 1").get()??null},"getRadarIntelCache",0,function(){return(0,t.getDbInstance)().prepare("SELECT version, tier, payload, signature, supporter_identity AS supporterIdentity, fetched_at AS fetchedAt FROM radar_intel_cache WHERE id = 1").get()??null},"getRadarLocalMergeState",0,function(){let e=new Map,t=new Set;for(let r of i()){let a=`${r.provider}:${r.modelId}`,d={};null!==r.displayName&&(d.displayName=r.displayName),null!==r.enabled&&(d.enabled=r.enabled),Object.keys(d).length>0&&e.set(a,d),r.tombstoned&&t.add(a)}return{localOverrides:e,tombstones:t}},"getRadarOffersCache",0,function(){return(0,t.getDbInstance)().prepare("SELECT version, tier, payload, signature, fetched_at AS fetchedAt FROM radar_offers_cache WHERE id = 1").get()??null},"getRadarReferralsCache",0,function(){return(0,t.getDbInstance)().prepare("SELECT generated_at AS generatedAt, tier, payload, signature, fetched_at AS fetchedAt FROM radar_referrals_cache WHERE id = 1").get()??null},"getRadarSettings",0,function(){let e=(0,t.getDbInstance)().prepare("SELECT opt_in, supporter_key_encrypted, updated_at FROM radar_settings WHERE id = 1").get();return{optIn:1===e.opt_in,supporterKey:(0,r.decrypt)(e.supporter_key_encrypted)??null,updatedAt:e.updated_at}},"listRadarLocalModelState",0,i,"setRadarCache",0,function(e){let r=(0,t.getDbInstance)(),a=e.fetchedAt??new Date().toISOString();r.prepare(`INSERT INTO radar_feed_cache (id, version, tier, payload, signature, fetched_at)
+     VALUES (1, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET
+       version    = excluded.version,
+       tier       = excluded.tier,
+       payload    = excluded.payload,
+       signature  = excluded.signature,
+       fetched_at = excluded.fetched_at`).run(e.version,e.tier,e.payload,e.signature,a)},"setRadarIntelCache",0,function(e){let r=e.fetchedAt??new Date().toISOString();(0,t.getDbInstance)().prepare(`INSERT INTO radar_intel_cache
+         (id, version, tier, payload, signature, supporter_identity, fetched_at)
+       VALUES (1, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         version = excluded.version,
+         tier = excluded.tier,
+         payload = excluded.payload,
+         signature = excluded.signature,
+         supporter_identity = excluded.supporter_identity,
+         fetched_at = excluded.fetched_at`).run(e.version,e.tier,e.payload,e.signature,e.supporterIdentity,r)},"setRadarKey",0,function(e){let a=(0,t.getDbInstance)(),d=null!==e?(0,r.encrypt)(e):null,n=a.prepare("UPDATE radar_settings SET supporter_key_encrypted = ?, updated_at = datetime('now') WHERE id = 1"),l=a.prepare("DELETE FROM radar_feed_cache WHERE id = 1"),s=a.prepare("DELETE FROM radar_referrals_cache WHERE id = 1"),o=a.prepare("DELETE FROM radar_offers_cache WHERE id = 1"),i=a.prepare("DELETE FROM radar_intel_cache WHERE id = 1");a.transaction(()=>{n.run(d),l.run(),s.run(),o.run(),i.run()})()},"setRadarLocalModelOverride",0,function(e,r,a){let l=n(e,r);if(!l||!a||"object"!=typeof a)return!1;let i=Object.keys(a);if(0===i.length||i.some(e=>"displayName"!==e&&"enabled"!==e)||Object.hasOwn(a,"enabled")&&null!==a.enabled&&"boolean"!=typeof a.enabled)return!1;let u=function(e){if(void 0===e)return;if(null===e)return null;if("string"!=typeof e)return;let t=e.trim();if(!(t.length<1||t.length>160||d.test(t)))return t}(a.displayName);return(!Object.hasOwn(a,"displayName")||void 0!==u)&&((0,t.getDbInstance)().transaction(()=>{let e=s(l.provider,l.modelId);o({...l,displayName:Object.hasOwn(a,"displayName")?u??null:e?.display_name??null,enabled:Object.hasOwn(a,"enabled")?a.enabled??null:e?.enabled===null||e?.enabled===void 0?null:1===e.enabled,tombstoned:e?.tombstoned===1})})(),!0)},"setRadarModelTombstone",0,function(e,r,a){let d=n(e,r);return!!d&&"boolean"==typeof a&&((0,t.getDbInstance)().transaction(()=>{let e=s(d.provider,d.modelId);o({...d,displayName:e?.display_name??null,enabled:e?.enabled===null||e?.enabled===void 0?null:1===e.enabled,tombstoned:a})})(),!0)},"setRadarOffersCache",0,function(e){let r=e.fetchedAt??new Date().toISOString();(0,t.getDbInstance)().prepare(`INSERT INTO radar_offers_cache (id, version, tier, payload, signature, fetched_at)
+       VALUES (1, ?, ?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET
+         version = excluded.version,
+         tier = excluded.tier,
+         payload = excluded.payload,
+         signature = excluded.signature,
+         fetched_at = excluded.fetched_at`).run(e.version,e.tier,e.payload,e.signature,r)},"setRadarOptIn",0,function(e){(0,t.getDbInstance)().prepare("UPDATE radar_settings SET opt_in = ?, updated_at = datetime('now') WHERE id = 1").run(+!!e)},"setRadarReferralsCache",0,function(e){let r=(0,t.getDbInstance)(),a=e.fetchedAt??new Date().toISOString();r.prepare(`INSERT INTO radar_referrals_cache (id, generated_at, tier, payload, signature, fetched_at)
+     VALUES (1, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET
+       generated_at = excluded.generated_at,
+       tier         = excluded.tier,
+       payload      = excluded.payload,
+       signature    = excluded.signature,
+       fetched_at   = excluded.fetched_at`).run(e.generatedAt,e.tier,e.payload,e.signature,a)}])},136388,e=>{e.v(t=>Promise.all(["server/chunks/_1x71ks1._.js","server/chunks/_0u09ium._.js","server/chunks/src_06c8vs0._.js","server/chunks/_0tsp696._.js","server/chunks/[root-of-the-server]__0g0umdq._.js","server/chunks/src_lib_db_0q-5o4j._.js","server/chunks/src_02l7t6d._.js","server/chunks/open-sse_1en0bdk._.js","server/chunks/src_shared_120yvyy._.js","server/chunks/src_1lk5r5a._.js"].map(t=>e.l(t))).then(()=>t(974210)))}];
+
+//# sourceMappingURL=src_lib_db_20fqnd8._.js.map

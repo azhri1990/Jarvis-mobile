@@ -1,0 +1,3 @@
+{
+  "/api/providers/[id]/interception-rules/route": "app/api/providers/[id]/interception-rules/route.js"
+}

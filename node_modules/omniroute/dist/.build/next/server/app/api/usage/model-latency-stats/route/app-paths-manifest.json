@@ -1,0 +1,3 @@
+{
+  "/api/usage/model-latency-stats/route": "app/api/usage/model-latency-stats/route.js"
+}

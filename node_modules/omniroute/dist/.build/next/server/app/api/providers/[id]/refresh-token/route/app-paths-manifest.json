@@ -1,0 +1,3 @@
+{
+  "/api/providers/[id]/refresh-token/route": "app/api/providers/[id]/refresh-token/route.js"
+}

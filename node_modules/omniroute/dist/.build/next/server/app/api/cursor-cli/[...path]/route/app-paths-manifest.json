@@ -1,0 +1,3 @@
+{
+  "/api/cursor-cli/[...path]/route": "app/api/cursor-cli/[...path]/route.js"
+}

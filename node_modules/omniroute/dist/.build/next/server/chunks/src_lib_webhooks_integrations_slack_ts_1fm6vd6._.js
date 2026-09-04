@@ -1,0 +1,3 @@
+module.exports=[591513,e=>{"use strict";var t=e.i(848270);e.s(["buildSlackPayload",0,function(e,r){let o=t.EVENT_DESCRIPTIONS[e],n="string"==typeof r.model?r.model:null,l="string"==typeof r.provider?r.provider:null,i="string"==typeof r.error?r.error:null,p=[`${o.emoji} *${o.label}*`];n&&p.push(`on \`${n}\``);let s=[p.join(" ")];i&&s.push(`*Error:* \`${i}\``),l&&!n&&s.push(`*Provider:* ${l}`);let u=s.join("\n");return{text:u,blocks:[{type:"section",text:{type:"mrkdwn",text:u}},{type:"context",elements:[{type:"mrkdwn",text:`OmniRoute \xb7 ${new Date().toISOString()}`}]}]}}])}];
+
+//# sourceMappingURL=src_lib_webhooks_integrations_slack_ts_1fm6vd6._.js.map

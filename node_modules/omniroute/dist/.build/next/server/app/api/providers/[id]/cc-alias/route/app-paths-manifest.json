@@ -1,0 +1,3 @@
+{
+  "/api/providers/[id]/cc-alias/route": "app/api/providers/[id]/cc-alias/route.js"
+}

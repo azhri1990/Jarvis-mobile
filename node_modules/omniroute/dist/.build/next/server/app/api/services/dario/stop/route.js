@@ -1,0 +1,10 @@
+var R=require("../../../../../chunks/[turbopack]_runtime.js")("server/app/api/services/dario/stop/route.js")
+R.c("server/chunks/src_lib_db_0g7_jvp._.js")
+R.c("server/chunks/[root-of-the-server]__11a57-q._.js")
+R.c("server/chunks/open-sse_1k8ubco._.js")
+R.c("server/chunks/[root-of-the-server]__0g06wx7._.js")
+R.c("server/chunks/[root-of-the-server]__04fbmh-._.js")
+R.c("server/chunks/src_0h2lvww._.js")
+R.c("server/chunks/_next-internal_server_app_api_services_dario_stop_route_actions_02-as_y.js")
+R.m(994791)
+module.exports=R.m(994791).exports

@@ -1,0 +1,37 @@
+module.exports=[947170,t=>t.a(async(e,r)=>{try{var n=t.i(290586),o=t.i(309559),a=e([n,o]);[n,o]=a.then?(await a)():a,t.s(["getAccountDisplayName",0,function(t){if(!t)return"Unknown Account";let e="string"==typeof t.name&&t.name.trim()||"string"==typeof t.displayName&&t.displayName.trim()||"string"==typeof t.email&&t.email.trim();return e||("string"==typeof t.id&&t.id?`Account #${t.id.slice(0,6)}`:"Unknown Account")}]),r()}catch(t){r(t)}},!1),315056,t=>{"use strict";var e=t.i(830471);async function r(t){let r=(0,e.getDbInstance)(),n={processed:0,inserted:0,errors:0};try{let e=`
+      INSERT INTO daily_usage_summary (provider, model, date, total_requests, total_input_tokens, total_output_tokens, total_cost)
+      SELECT
+        LOWER(provider) as provider,
+        LOWER(model) as model,
+        DATE(timestamp) as date,
+        COUNT(*) as total_requests,
+        COALESCE(SUM(tokens_input), 0) as total_input_tokens,
+        COALESCE(SUM(tokens_output), 0) as total_output_tokens,
+        0.0 as total_cost
+      FROM usage_history
+      WHERE timestamp < ?
+        AND provider IS NOT NULL AND provider != ''
+        AND model IS NOT NULL AND model != ''
+      GROUP BY LOWER(provider), LOWER(model), DATE(timestamp)
+      ON CONFLICT(provider, model, date) DO UPDATE SET
+        total_requests = daily_usage_summary.total_requests + excluded.total_requests,
+        total_input_tokens = daily_usage_summary.total_input_tokens + excluded.total_input_tokens,
+        total_output_tokens = daily_usage_summary.total_output_tokens + excluded.total_output_tokens
+    `,o=r.prepare(e).run(t);n.processed=o.changes,n.inserted=o.changes,console.log(`[Aggregation] usage_history rollup: ${n.inserted} rows for dates before ${t}`)}catch(t){console.error("[Aggregation] usage_history rollup error:",t),n.errors++}return n}t.i(417358),t.s(["rollupUsageHistoryBeforeDate",0,r])},642259,t=>{"use strict";var e=t.i(611704);let r=new Set(["minimax","kimi-coding","kimi-coding-apikey","xiaomi-mimo","bailian-coding-plan","qwen-cloud-token-plan","glm","glm-cn","claude","cc","opencode-go"]);function n(t){if(!t||!t.includes("/"))return t;let e=t.split("/");return e[e.length-1]}function o(t){let e=t?.cost_in_usd_ticks;return"number"==typeof e&&Number.isFinite(e)&&e>=0?e/1e10:null}function a(t,e=0){if("number"==typeof t&&Number.isFinite(t))return t;if("string"==typeof t&&t.trim().length>0){let r=Number(t);return Number.isFinite(r)?r:e}return e}function i(t){return"string"==typeof t?t.trim().toLowerCase():""}function s(t){return t.replace(/-(?:ultra|max|xhigh|high|medium|low|none)$/i,"")}async function u(c,l,p,_={}){if(!p||!c||!l)return 0;let d=o(p);if(null!==d)return d;try{let{getPricingForModel:u}=await t.A(893682),d=await u(c,l);if(!d){let t=n(l);t!==l&&(d=await u(c,t));let e=i(c);if(!d&&("codex"===e||"cx"===e)){let e=s(t);e!==t&&(d=await u(c,e))}}if(!d)return 0;let m=d&&"object"==typeof d&&!Array.isArray(d)?d:{};return function(t,u,c={}){if(!u)return 0;let l=o(u);if(null!==l)return l;if(!t||c.flatRateAsZero&&function(t){if(!t||"string"!=typeof t)return!1;let n=t.trim().toLowerCase();return!!n&&(!!r.has(n)||Object.prototype.hasOwnProperty.call(e.WEB_COOKIE_PROVIDERS,n))}(c.provider))return 0;let p=a(t.input,0),_=a(t.cached,p),d=a(t.output,0),m=a(t.reasoning,d),g=a(t.cache_creation,p),f=0,h=u.input??u.prompt_tokens??u.input_tokens??0,E=u.cacheRead??u.cached_tokens??u.cache_read_input_tokens??0,y=u.cacheCreation??u.cache_creation_input_tokens??0;f+=p/1e6*Math.max(0,h-E-y),E>0&&(f+=_/1e6*E),f+=d/1e6*(u.output??u.completion_tokens??u.output_tokens??0);let C=u.reasoning??u.reasoning_tokens??0;return C>0&&void 0!==t.reasoning&&null!==t.reasoning&&(f+=(m-d)/1e6*C),y>0&&(f+=g/1e6*y),f*function(t,e,r){let o=i(t),a=i(r);if("codex"!==o&&"cx"!==o)return 1;if("flex"===a)return .5;if("priority"!==a&&"fast"!==a)return 1;let u=s(n(String(e||"")).toLowerCase()),c=u.replace(/-/g,"");return/^gpt-5\.6-(?:sol|terra|luna)$/.test(u)||/^gpt5\.6(?:sol|terra|luna)$/.test(c)?1.5:"gpt-5.5"===u||"gpt5.5"===c?2.5:"gpt-5.4"===u||"gpt5.4"===c?2:1}(c.provider,c.model,c.serviceTier)}(m,p,{provider:c,model:l,..._})}catch(t){return console.error("Error calculating cost:",t),0}}async function c(e,r,o,i){if(!r||!o)return 0;try{let{getPricingForModel:s}=await t.A(893682),u=await s(r,o);if(!u){let t=n(o);t!==o&&(u=await s(r,t))}if(!u)return 0;let c=u;switch(e){case"image":if(!c)return 0;return a(c.output_cost_per_image??c.input_cost_per_image,0)*Math.max(0,Math.floor(a(i.n,0)));case"audio":if(!c)return 0;let l=a(i.seconds,0);if(l>0){let t=a(c.input_cost_per_second??c.output_cost_per_second,0);if(t>0)return t*l}let p=a(i.characters,0);if(p>0){let t=a(c.input_cost_per_character??c.output_cost_per_character,0);if(t>0)return Math.round(t*p*1e10)/1e10}return 0;case"rerank":if(!c)return 0;return a(c.search_unit_cost??c.input_cost_per_query,0)*Math.max(0,a(i.searchUnits,0));case"video":if(!c)return 0;return a(c.output_cost_per_video_per_second??c.input_cost_per_video_per_second,0)*a(i.seconds,0);default:return 0}}catch(t){return console.error("Error calculating modal cost:",t),0}}t.s(["calculateCost",0,u,"calculateModalCost",0,c],642259)},645449,t=>t.a(async(e,r)=>{try{var n=t.i(830471),o=t.i(950412),a=t.i(643275),i=t.i(947170),s=t.i(642259);t.i(315056);var u=e([o,a,i]);async function c(t,e){if(!t||!e)return{costUsd:0,requests:0};let r=(0,n.getDbInstance)().prepare(`SELECT model,
+          COALESCE(SUM(tokens_input), 0) AS input,
+          COALESCE(SUM(tokens_output), 0) AS output,
+          COALESCE(SUM(tokens_cache_read), 0) AS cacheRead,
+          COALESCE(SUM(tokens_cache_creation), 0) AS cacheCreation,
+          COALESCE(SUM(tokens_reasoning), 0) AS reasoning,
+          COUNT(*) AS requests
+       FROM usage_history
+       WHERE connection_id = ? AND provider = ? AND success = 1
+       GROUP BY model`).all(e,t),o=0,a=0;for(let e of r){a+=Math.max(0,Number(e.requests??0));let r="string"==typeof e.model?e.model:"",n={input:Number(e.input??0),output:Number(e.output??0),cacheRead:Number(e.cacheRead??0),cacheCreation:Number(e.cacheCreation??0),reasoning:Number(e.reasoning??0)};o+=await (0,s.calculateCost)(t,r,n,{provider:t,model:r,flatRateAsZero:!0})}return{costUsd:Math.max(0,o),requests:a}}[o,a,i]=u.then?(await u)():u,t.s(["getConnectionSpendUsdSinceAdded",0,c,"getMonthlyProviderTokensForConnection",0,function(t,e){if(!t||!e)return 0;let r=(0,n.getDbInstance)(),o=new Date,a=new Date(Date.UTC(o.getUTCFullYear(),o.getUTCMonth(),1)).toISOString(),i=r.prepare(`SELECT COALESCE(SUM(tokens_input), 0)
+            + COALESCE(SUM(tokens_output), 0)
+            + COALESCE(SUM(tokens_cache_read), 0)
+            + COALESCE(SUM(tokens_cache_creation), 0)
+            + COALESCE(SUM(tokens_reasoning), 0) AS total
+       FROM usage_history
+       WHERE provider = ? AND connection_id = ? AND timestamp >= ?`).get(t,e,a);return Math.max(0,Number(i?.total??0))}]),r()}catch(t){r(t)}},!1)];
+
+//# sourceMappingURL=src_lib_0vgj04e._.js.map

@@ -1,0 +1,10 @@
+var R=require("../../../../../chunks/[turbopack]_runtime.js")("server/app/api/services/bifrost/auto-start/route.js")
+R.c("server/chunks/src_lib_db_1silj26._.js")
+R.c("server/chunks/[root-of-the-server]__1vokz41._.js")
+R.c("server/chunks/open-sse_1k8ubco._.js")
+R.c("server/chunks/[root-of-the-server]__0g06wx7._.js")
+R.c("server/chunks/src_lib_1icoj61._.js")
+R.c("server/chunks/src_0uqt_iz._.js")
+R.c("server/chunks/_next-internal_server_app_api_services_bifrost_auto-start_route_actions_149ueut.js")
+R.m(108949)
+module.exports=R.m(108949).exports
